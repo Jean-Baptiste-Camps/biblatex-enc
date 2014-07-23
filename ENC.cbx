@@ -1,0 +1,224 @@
+  %% biblatex-ENC v.0.9 - beta (23/07/2014)
+  %% ENC.cbx
+  %% Copyright 2014 J.B. Camps (jbcamps@hotmail.com)
+  %
+  % This work may be distributed and/or modified under the conditions
+  % of the LaTeX Project Public License, either version 1.3 of this 
+  % license or (at your option) any later version.
+  % The latest version of this license is in
+  %   http://www.latex-project.org/lppl.txt
+  % and version 1.3 or later is part of all distributions of LaTeX
+  % version 2005/12/01 or later.
+  %
+  % This work has the LPPL maintenance status `maintained'.
+  % 
+  % The Current Maintainer of this work is J.B. Camps (jbcamps <at> hotmail.com).
+  %
+  % This work consists of the files ENC.cbx and ENC.BBX.
+
+\ProvidesFile{ENC.cbx}[]
+
+\DeclareBibliographyOption{postnote}{%
+  \ifcsdef{hz@opt@postnote@#1}
+    {\csuse{hz@opt@postnote@#1}}
+    {\PackageError{historische-zeitschrift}
+       {Invalid option 'postnote=#1'\MessageBreak
+        Valid values are 'afterparen', 'inparen'}}}
+
+\def\hz@opt@postnote@afterparen{%
+  \renewbibmacro*{postnote}{%
+    %\ifbool{cbx@seenote}
+      %{\iffieldundef{postnote}
+        %{\printtext{\bibrightparen}}
+        %{\printtext{\bibrightparen}%
+         %\postnotedelim
+         %\printfield{postnote}}}
+      {\iffieldundef{postnote}
+        {}
+        {\postnotedelim
+         \printfield{postnote}}}}}
+
+\def\hz@opt@postnote@inparen{%
+  \renewbibmacro*{postnote}{%
+    \ifbool{cbx@seenote}
+      {\iffieldundef{postnote}
+        {\printtext{\bibrightparen}}
+        {\postnotedelim
+         \printfield{postnote}%
+         \printtext{\bibrightparen}}}
+      {\iffieldundef{postnote}
+        {}
+        {\postnotedelim
+         \printfield{postnote}}}}}
+
+\ExecuteBibliographyOptions{
+  citetracker=context,
+  ibidtracker=constrict,
+  idemtracker=true,
+  singletitle=false,%
+  pagetracker,
+  autocite=footnote,
+  postnote=afterparen
+}
+
+\providecommand*{\mkibid}[1]{#1}
+\newbool{cbx@loccit}
+% to check if a 'see note' phrase is in use:
+\newbool{cbx@seenote}
+
+\DeclareBibliographyOption{ibidpage}[true]{%
+  \ifstrequal{#1}{true}
+    {\ExecuteBibliographyOptions{loccittracker=constrict}}
+    {\ExecuteBibliographyOptions{loccittracker=false}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%Macro pour l'itération du nom d'auteur
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Option 'nameseen'
+\newcommand*{\cbx@seennames}{}
+\newrobustcmd*{\cbx@nameseen}[1]{%
+  \listxadd{\cbx@seennames}{\detokenize{#1}}}
+\newrobustcmd*{\cbx@ifnameseen}[1]{%
+  \xifinlist{\detokenize{#1}}{\cbx@seennames}}
+
+\AtBeginDocument{%
+\DeclareNameFormat{citeauthor}{%
+       \cbx@ifnameseen{#1#3#5#7}
+         {\usebibmacro{name:first-last-upshape}{#1}{#4}{#5}{#7}%
+         }%
+         {\usebibmacro{name:first-last-upshape}{#1}{#3}{#5}{#7}%
+          \cbx@nameseen{#1#3#5#7}}%
+       \usebibmacro{name:andothers}}
+}
+
+%%%%% %%%%% %%%%% %%%%% %%%%% 
+%%%%% Reformatting      %%%%% 
+%%%%% %%%%% %%%%% %%%%% %%%%% 
+
+%\DeclareFieldFormat{citeauthor}{#3\addspace #1}
+\DeclareFieldFormat{citetitle}{#1}
+\DeclareFieldFormat[article]{citetitle}{#1}
+\DeclareFieldFormat[inbook]{citetitle}{#1}
+\DeclareFieldFormat[incollection]{citetitle}{#1}
+\DeclareFieldFormat[inproceedings]{citetitle}{#1}
+\DeclareFieldFormat[patent]{citetitle}{#1}
+\DeclareFieldFormat[thesis]{citetitle}{#1}
+\DeclareFieldFormat[unpublished]{citetitle}{#1}
+
+\DeclareFieldFormat{postnote}{#1}
+\DeclareFieldFormat{multipostnote}{#1}
+
+%%%%% %%%%% %%%%% %%%%% %%%%% 
+%%%%% Cite bibmacros    %%%%%
+%%%%% %%%%% %%%%% %%%%% %%%%% 
+
+\newbibmacro*{cite}{%
+  \global\boolfalse{cbx@seenote}% 
+  \iffieldundef{shorthand}
+    {\usedriver
+       {\DeclareNameAlias{sortname}{default}}
+       {\thefield{entrytype}}}
+    {\printfield{shorthand}}}	% 
+
+\newbibmacro*{footcite}{%
+  \global\boolfalse{cbx@loccit}%
+  \global\boolfalse{cbx@seenote}% 
+  \ifciteseen
+    {\iffieldundef{shorthand}
+       {\ifthenelse{\ifciteibid\AND\NOT\iffirstonpage}
+          {\usebibmacro{footcite:ibid}}
+          {\usebibmacro{footcite:note}}}
+       {\usebibmacro{footcite:shorthand}}}
+    {\usebibmacro{footcite:full}%
+     \usebibmacro{footcite:save}}}
+
+
+\newbibmacro*{footcite:save}{%
+  \ifundef\@thefnmark
+    {\ifundef\@theenmark % endnotes.sty
+       {\csgdef{cbx@note@\thefield{entrykey}}{%
+          \BibliographyWarning{Missing footnote mark}\textbf{??}}}
+       {\global\cslet{cbx@note@\thefield{entrykey}}\@theenmark}}
+    {\global\cslet{cbx@note@\thefield{entrykey}}\@thefnmark}%
+  \csxdef{cbx@first@\thefield{entrykey}}{\the\value{instcount}}}
+
+\newbibmacro*{footcite:full}{%
+  \printtext{%
+    \bibhypertarget{\thefield{entrykey}:\the\value{instcount}}{%
+      \usedriver % appelle le driver du fichier .bbx, cf. doc. p. 190...
+	{\DeclareNameAlias{sortname}{default}}
+	{cite:\thefield{entrytype}}}}%
+  \usebibmacro{shorthandintro}}
+
+\newbibmacro*{footcite:note}{% Faudra peut-être supprimer ça...
+  \global\booltrue{cbx@seenote}%
+  \ifnameundef{labelname}
+    {\printfield{label}}
+    {\usebibmacro{author-shortnote}%
+    %\printnames{labelname}}%
+    }%
+  \ifsingletitle
+    {}
+    {\setunit*{\addcomma\space}%
+     \printfield[title]{labeltitle}}%
+  \setunit*{\addspace}%<
+      }
+
+\newbibmacro*{footcite:ibid}{%
+  \printtext{%
+    \bibhyperlink{\thefield{entrykey}:%
+                  \@nameuse{cbx@first@\thefield{entrykey}}}{%
+      \bibstring[\mkibid]{ibidem}}}%
+  \ifloccit
+    {\global\booltrue{cbx@loccit}}
+    {}}
+    
+\newbibmacro*{footcite:shorthand}{%
+  \printtext{%
+    \bibhyperlink{\thefield{entrykey}:%
+                  \@nameuse{cbx@first@\thefield{entrykey}}}{%
+      \printfield{shorthand}}}}
+
+\newbibmacro*{cite:postnote}{%
+  \ifbool{cbx@loccit}
+    {}
+    {\usebibmacro{postnote}}}
+    
+%%%%% %%%%% %%%%% %%%%% %%%%% 
+%%%%% Cite commands     %%%%%
+%%%%% %%%%% %%%%% %%%%% %%%%% 
+
+\DeclareCiteCommand{\cite}
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \iffootnote
+     {\usebibmacro{footcite}}
+     {\usebibmacro{cite}}}
+  {\multicitedelim}
+  {\usebibmacro{cite:postnote}}
+  
+\DeclareCiteCommand{\textcite}
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+  {\usebibmacro{footcite}}}
+  {\multicitedelim}
+  {\usebibmacro{cite:postnote}}
+
+\DeclareCiteCommand{\parencite}[\mkbibparens]
+  {\usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \iffootnote
+     {\usebibmacro{footcite}}
+     {\usebibmacro{cite}}}
+  {\multicitedelim}
+  {\usebibmacro{cite:postnote}}
+
+\DeclareCiteCommand{\footcite}[\mkbibfootnote]
+  {\bibsentence
+   \usebibmacro{prenote}}
+  {\usebibmacro{citeindex}%
+   \usebibmacro{footcite}}
+  {\multicitedelim}
+  {\usebibmacro{cite:postnote}}
+
+\endinput

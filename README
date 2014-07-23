@@ -1,0 +1,45 @@
+  %% biblatex-ENC v.0.9b - beta (23/07/2014)
+  %% Copyright 2014 J.B. Camps (jbcamps <at> hotmail.com)
+      
+      %%%%% Contents %%%%
+      % 1. Description  %
+      % 2. Versions     %
+      % 3. Licence      %
+      %%%%%%%%%%%%%%%%%%%
+  
+  % 1. Description
+  % ---------------
+  % biblatex-enc is a citation and bibliography style for use with
+  % biblatex. It tries to conform to the bibliographic standards used
+  % in the École nationale des chartes, and may be suited for a more
+  % general use in historical works. It is initially derived from the 
+  % historische-zeitschrift package maintained by Dominik Waßenhoven,
+  % with the necessary modifications.
+
+  % 2. Versions
+  % ---------------
+  % First version mars-avril 2011
+  % Current version, 2013-2014 :
+  % TODO:
+  % - Comme on définit le format par défaut des noms de famille 
+  % d'auteurs comme pas en petites capitales, supprimer les formats
+  % upshape, et garder juste la spécification de SC pour la biblio ?
+  % - harmoniser les formats éditeurs
+  % - rédiger une brève documentation ?
+    
+  % 3. Licence
+  % --------------- 
+  %
+  % This work may be distributed and/or modified under the conditions
+  % of the LaTeX Project Public License, either version 1.3 of this 
+  % license or (at your option) any later version.
+  % The latest version of this license is in
+  %   http://www.latex-project.org/lppl.txt
+  % and version 1.3 or later is part of all distributions of LaTeX
+  % version 2005/12/01 or later.
+  %
+  % This work has the LPPL maintenance status `maintained'.
+  % 
+  % The Current Maintainer of this work is J.B. Camps (jbcamps@hotmail.com).
+  %
+  % This work consists of the files ENC.cbx and ENC.BBX.
