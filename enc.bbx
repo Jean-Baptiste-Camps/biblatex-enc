@@ -16,6 +16,10 @@
   %
   % This work consists of the files enc.cbx and enc.BBX.
 
+%TODO: ajouter des commandes au début pour vider les champs non nécessaires (cf. style maison MHLA).
+%TODO: a-t-on besoin de différencier encore newunit et newblock?
+
+
 \ProvidesFile{enc.bbx}[]
 
 \@ifpackagelater{biblatex}{2010/02/14}
@@ -48,10 +52,10 @@
   eprint=true
 }
 
-\DeclareBibliographyAlias{reference}{collection}
+\DeclareBibliographyAlias{reference}{collection} %Attribue un type non couvert à un driver existant (ici, reference est attribué à collection
 \DeclareBibliographyAlias{inreference}{incollection}
-
-
+\DeclareBibliographyAlias{mvbook}{book} %le type mvbook (multi-volume book) a été ajouté en 2012. Pour l'instant, nous ne différencions pas dans la mise en forme.
+\DeclareBibliographyAlias{cite:mvbook}{cite:book}
 
 %%%%% %%%%% %%%%% %%%%% %%%%% 
 %%%%% Reformatting      %%%%% 
@@ -410,7 +414,7 @@
     {\setunit*{\addspace}}
     {\setunit*{\addcolon\space}}%
   \printlist{institution}%
-  \setunit*{\addspace}%
+  \setunit*{\addcomma\space}%
   \printfield{year}%
   \newunit}
 
@@ -447,7 +451,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 %Et on est prêts, c'est parti !
-\InitializeBibliographyStyle{%
+\InitializeBibliographyStyle{% Specifies arbitrary code to be inserted at the beginning of the bibliography
   \global\undef\bbx@lasthash}
 
 \DeclareBibliographyDriver{shorthand}{%
@@ -501,8 +505,7 @@
     {}%
   \newunit
   \printfield{volumes}%
-  \newblock
-  \setunit*{\addspace}%
+  \newunit\newblock
   \printfield{edition}%
   \setunit*{\newunitpunct}%
   \printfield{note}%
@@ -519,7 +522,7 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -562,8 +565,6 @@
  % \usebibmacro{editor}%
  % \setunit{\labelnamepunct}\newblock
   \usebibmacro{maintitle+title}%
-  \newunit
-  \printlist{language}%
   \newunit\newblock
   \usebibmacro{byeditor+others}%
   \newunit
@@ -573,11 +574,9 @@
     {}%
   \newunit
   \printfield{volumes}%
-  \newblock
+  \newunit\newblock
   \printfield{edition}%
-  \setunit*{\addspace}%
   \printfield{note}%
-  \setunit*{\newunitpunct}%
   \usebibmacro{publisher+location+year}%
   \setunit*{\addspace}%
   \usebibmacro{series+number}%
@@ -590,7 +589,7 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -634,7 +633,7 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -653,11 +652,10 @@
   \newunit \newblock
   }%
   \usebibmacro{maintitle+booktitle}%
-  %
 %  \newunit
  % \printlist{language}%
-%  \newunit\newblock
-%  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
   \newunit
   \iffieldundef{maintitle}
     {\printfield{volume}%
@@ -682,7 +680,7 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -712,7 +710,6 @@
      \printfield{part}}
     {}%
   \newunit
-  \printfield{volumes}%
   \newblock
   \setunit*{\addspace}%
   \printfield{note}%
@@ -729,7 +726,7 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -768,7 +765,7 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -804,6 +801,8 @@
   \newunit\newblock
   \printfield{addendum}%
   \usebibmacro{finentry}}
+ 
+  
 
 \DeclareBibliographyDriver{online}{%
   \usebibmacro{bibindex}%
@@ -854,7 +853,7 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -915,7 +914,7 @@
   \usebibmacro{pageref}
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -992,7 +991,7 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -1068,12 +1067,13 @@
   \usebibmacro{pageref}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
   \newblock%
   \usebibmacro{finentry}}
+  
 
 \DeclareBibliographyDriver{cite:booklet}{%
   \usebibmacro{bibindex}%
@@ -1109,8 +1109,6 @@
  % \usebibmacro{editor}%
  % \setunit{\labelnamepunct}\newblock
   \usebibmacro{maintitle+title}%
-  \newunit
-  \printlist{language}%
   \newunit\newblock
   \usebibmacro{byeditor+others}%
   \newunit
@@ -1120,11 +1118,10 @@
     {}%
   \newunit
   \printfield{volumes}%
-  \newblock
+  \newunit\newblock
   \printfield{edition}%
-  \setunit*{\addspace}%
+  \newunit
   \printfield{note}%
-  \setunit*{\newunitpunct}%
   \usebibmacro{publisher+location+year}%
   \setunit{\addspace}%  
   \usebibmacro{series+number}%
@@ -1135,7 +1132,7 @@
   \printfield{pagetotal}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -1180,7 +1177,7 @@
   \usebibmacro{series+number}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -1202,8 +1199,8 @@
   \usebibmacro{maintitle+booktitle}%
 %  \newunit
  % \printlist{language}%
-%  \newunit\newblock
-%  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
   \newunit
   \iffieldundef{maintitle}
     {\printfield{volume}%
@@ -1224,7 +1221,7 @@
   \usebibmacro{chapter+pages}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -1247,8 +1244,8 @@
   \printfield{venue}%
   %\newunit
   %\printlist{language}%
-%  \newunit\newblock
-%  \usebibmacro{byeditor+others}%
+  \newunit\newblock
+  \usebibmacro{byeditor+others}%
   \newunit\newblock
   \iffieldundef{maintitle}
     {\printfield{volume}%
@@ -1270,7 +1267,7 @@
   \usebibmacro{chapter+pages}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -1309,7 +1306,7 @@
   \usebibmacro{series+number}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -1395,7 +1392,7 @@
   \usebibmacro{date}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -1456,7 +1453,7 @@
   \printfield{pagetotal}
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
@@ -1533,7 +1530,7 @@
   \usebibmacro{date}%
   \newunit\newblock
   \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
     {}%
   \newunit\newblock
   \printfield{addendum}%
