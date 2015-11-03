@@ -16,9 +16,12 @@
   %
   % This work consists of the files enc.cbx and enc.BBX.
 
-%TODO: ajouter des commandes au début pour vider les champs non nécessaires (cf. style maison MHLA).
-%TODO: a-t-on besoin de différencier encore newunit et newblock?
 
+%TODO : ajouter des commandes au début pour vider les champs non nécessaires (cf. style maison MHLA).
+%TODO : a-t-on besoin de différencier encore newunit et newblock?
+%TODO déplacer volumes, mention d'édition, etc. après lieu et date; virer le nombre de pages?
+
+% Question au long cours: quel type d'editor pour le directeur de collection dans Biblatex? Zotero utilise redactor, mais ça ne paraît pas idéal.
 
 \ProvidesFile{enc.bbx}[]
 
@@ -245,12 +248,13 @@
     {\usebibmacro{name:delim}{#1}%
      \usebibmacro{name:hook}{#1}%
      \mkbibnamelast{\textsc{#1}}\isdot \addspace
+     \ifblank{#2#3#4}{}{
      \mkbibparens{% ajout des parenthèses autour du prénom
 %
 %     \ifblank{#2#3}{}{\addcomma}%
      \ifblank{#2}{}{\mkbibnamefirst{#2}}%
      \ifblank{#3}{}{\addlowpenspace\mkbibnameprefix{#3}}
-     \ifblank{#4}{}{\addlowpenspace\mkbibnameaffix{#4}}\unspace}
+     \ifblank{#4}{}{\addlowpenspace\mkbibnameaffix{#4}}\unspace}}
 }}
 
 
@@ -516,8 +520,8 @@
   \setunit{\newunitpunct}  
   \newunit\newblock
   \usebibmacro{chapter+pages}%
-  \newunit
-  \printfield{pagetotal}
+%  \newunit
+%  \printfield{pagetotal}
   \newunit\newblock
   \usebibmacro{pageref}%
   \newunit\newblock
@@ -603,7 +607,7 @@
   \newunit\newblock
   \usebibmacro{in:}%
   \usebibmacro{bybookauthor}%
-  \newblock
+  \setunit*{\newunitpunct}
   \usebibmacro{maintitle+booktitle}%
   %\newunit
   %\printlist{language}%
@@ -1148,7 +1152,8 @@
   \newunit\newblock
   \usebibmacro{in:}%
   \usebibmacro{bybookauthor}%
-  \newblock
+  \setunit{\newunitpunct}%
+  \newunit\newblock
   \usebibmacro{maintitle+booktitle}%
   %\newunit
   %\printlist{language}%
@@ -1172,9 +1177,6 @@
   \usebibmacro{series+number}%
  \setunit*{\newunitpunct}%
   \usebibmacro{chapter+pages}%
-    \newblock
-      \setunit{\addspace}%
-  \usebibmacro{series+number}%
   \newunit\newblock
   \iftoggle{bbx:url}
     {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}
