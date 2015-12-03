@@ -106,6 +106,18 @@
 \DeclareFieldFormat[thesis]{citetitle}{#1}
 \DeclareFieldFormat[unpublished]{citetitle}{#1}
 
+%%%%% Les titres courts. 
+%Le seul problème avec l'usage des \dots est que biblatex les considère bien comme des points (abréviatifs, si on précise \isdot), et élimine la ponctuation finale, si rien ne suit, et même s'ils figurent dans les guillemets. Cela n'est gênant que pour les titres abrégés d'article, actes, ... entre guillemets, qui sont bels et bien abrégés (pour lesquels les  points de suspensions se trouvent bien dans les guillemets): pour ce cas limite, il faut préciser au /punctuation tracker/ de BibLaTex que la phrase n'est pas finie, avec \midsentence.
+%En outre, il faut ajouter un test pour voir si labeltitle est égal à title, et, dans ce cas, mettre les points à l'extérieur des guillemets pour les articles & co. (fait infra dans la macro footcite:note).
+\DeclareFieldFormat{shorttitle}{\textit{#1}\printtext{\dots}\isdot}
+\DeclareFieldFormat[article]{shorttitle}{\mkbibquote{#1\printtext{\dots}\isdot}\midsentence}
+\DeclareFieldFormat[inbook]{shorttitle}{\mkbibquote{#1\printtext{\dots}\isdot}\midsentence}
+\DeclareFieldFormat[incollection]{shorttitle}{\mkbibquote{#1\printtext{\dots}\isdot}\midsentence}
+\DeclareFieldFormat[inproceedings]{shorttitle}{\mkbibquote{#1\printtext{\dots}\isdot}\midsentence}
+\DeclareFieldFormat[patent]{shorttitle}{\textit{#1}\printtext{\dots}\isdot}
+\DeclareFieldFormat[thesis]{shorttitle}{\textit{#1}\printtext{\dots}\isdot}
+\DeclareFieldFormat[unpublished]{shorttitle}{\textit{#1}\printtext{\dots}\isdot}
+
 \DeclareFieldFormat{postnote}{#1}
 \DeclareFieldFormat{multipostnote}{#1}
 
@@ -151,19 +163,27 @@
 	{cite:\thefield{entrytype}}}}%
   \usebibmacro{shorthandintro}}
 
-\newbibmacro*{footcite:note}{% Faudra peut-être supprimer ça...
+\newbibmacro*{footcite:note}{%
   \global\booltrue{cbx@seenote}%
-  \ifnameundef{labelname}
-    {\printfield{label}}
-    {\usebibmacro{author-shortnote}%
-    %\printnames{labelname}}%
-    }%
-  \ifsingletitle
-    {}
+  \ifnameundef{labelname}%
+    {\printfield{label}}%
+    {\usebibmacro{author-shortnote}}%
+  \ifsingletitle%Expands to true if there is only one work by the labelname name in the bibliography,
+    {}%
     {\setunit*{\addcomma\space}%
-     \printfield[title]{labeltitle}}%
-  \setunit*{\addspace}%<
-      }
+    \iffieldundef{shorttitle}%
+    {\printfield[title]{labeltitle}%
+     \printtext{\dots}\isdot}%
+    {%
+     \iffieldsequal{title}{shorttitle}{%
+       \printfield[title]{labeltitle}%
+       \printtext{\dots}\isdot% 
+     }{%
+       \printfield[shorttitle]{labeltitle}% 
+      }%
+    }%
+  }%
+}
 
 \newbibmacro*{footcite:ibid}{%
   \printtext{%
