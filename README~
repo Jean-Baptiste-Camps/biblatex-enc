@@ -35,14 +35,6 @@
   %
   % ..... [INSERT HERE DOCUMENTATION FOR MAIN COMMANDS] .....
   
-  
-  
-  % For critical editions to be handled correctly (i.e. for the critical 
-  % editor to be quoted as « éd. Untel », and not « dir. Untel », the 
-  % field editortype need to be set as criticaleditor in the .bib file,
-  % e.g.
-  editortype = {criticaleditor}
-  
   % 4. Versions
   % ---------------
   % First version mars-april 2011
