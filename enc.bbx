@@ -116,6 +116,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%   Passage du français au français ENC  %%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%Définition d'une chaîne différente pour les éditeurs critiques (qui correspond au champ «editortype» de la base bibliographique)
+
+\NewBibliographyString{bycriticaleditor}
+
 \DefineBibliographyStrings{french}{%
   in               = {dans},
   idem             = {Id.},
@@ -132,6 +137,7 @@
   february         = {f\'evr\adddot},
   march            = {mars},
   byeditor         = {dir\adddot},
+  bycriticaleditor = {éd\adddot},
 }
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% 
@@ -445,8 +451,10 @@
     {\usebibmacro{eprint}}
     {}%
   \newunit%
-  \iftoggle{bbx:url}
-    {\usebibmacro{url+urldate}}
+  \iftoggle{bbx:url}%Modif. du 20/05/2016: n'afficher l'URL que si pas de doi.
+    {\iffieldundef{doi}
+    		{\usebibmacro{url+urldate}}
+    		{}}
     {}}
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% 
