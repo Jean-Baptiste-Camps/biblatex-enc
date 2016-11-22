@@ -57,9 +57,10 @@
   loccittracker=true, %j'ajoute celui-ci pour, lorsque deux ibid. se suivent, ne préciser les pages que quand elles différent
   idemtracker=true,
   singletitle=false,%
-  pagetracker,
+  pagetracker=true,
   autocite=footnote,
-  postnote=afterparen
+  postnote=afterparen,
+  uniquename=true
 }
 
 \providecommand*{\mkibid}[1]{#1}
@@ -78,19 +79,42 @@
 % Option 'nameseen'
 \newcommand*{\cbx@seennames}{}
 \newrobustcmd*{\cbx@nameseen}[1]{%
-  \listxadd{\cbx@seennames}{\detokenize{#1}}}
+  \listcsxadd{cbx@seennames}{#1}}
 \newrobustcmd*{\cbx@ifnameseen}[1]{%
-  \xifinlist{\detokenize{#1}}{\cbx@seennames}}
+  \xifinlistcs{#1}{cbx@seennames}}
 
-\AtBeginDocument{%
+
 \DeclareNameFormat{citeauthor}{%
-       \cbx@ifnameseen{#1#3#5#7}
-         {\usebibmacro{name:first-last-upshape}{#1}{#4}{#5}{#7}%
-         }%
-         {\usebibmacro{name:first-last-upshape}{#1}{#3}{#5}{#7}%
-          \cbx@nameseen{#1#3#5#7}}%
-       \usebibmacro{name:andothers}}
-}
+  \cbx@ifnameseen{\thefield{hash}}
+    {}
+    {\setcounter{uniquename}{2}%
+     \cbx@nameseen{\thefield{hash}}}%
+  \ifcase\value{uniquename}%
+    \usebibmacro{name:given-family}
+      {\namepartfamily}
+      {\namepartgiveni}
+      {\namepartprefix}
+      {\namepartsuffix}%
+  \or
+    \ifuseprefix
+      {\usebibmacro{name:given-family}
+        {\namepartfamily}
+        {\namepartgiveni}
+        {\namepartprefix}
+        {\namepartsuffixi}}
+      {\usebibmacro{name:given-family}
+        {\namepartfamily}
+        {\namepartgiveni}
+        {\namepartprefixi}
+        {\namepartsuffixi}}%
+  \or
+    \usebibmacro{name:given-family}
+      {\namepartfamily}
+      {\namepartgiven}
+      {\namepartprefix}
+      {\namepartsuffix}%
+  \fi
+  \usebibmacro{name:andothers}}
 
 %%%%% %%%%% %%%%% %%%%% %%%%% 
 %%%%% Reformatting      %%%%% 
@@ -109,7 +133,7 @@
 %%%%% Les titres courts. 
 %Le seul problème avec l'usage des \dots est que biblatex les considère bien comme des points (abréviatifs, si on précise \isdot), et élimine la ponctuation finale, si rien ne suit, et même s'ils figurent dans les guillemets. Cela n'est gênant que pour les titres abrégés d'article, actes, ... entre guillemets, qui sont bels et bien abrégés (pour lesquels les  points de suspensions se trouvent bien dans les guillemets): pour ce cas limite, il faut préciser au /punctuation tracker/ de BibLaTex que la phrase n'est pas finie, avec \midsentence.
 %En outre, il faut ajouter un test pour voir si labeltitle est égal à title, et, dans ce cas, mettre les points à l'extérieur des guillemets pour les articles & co. (fait infra dans la macro footcite:note).
-\DeclareFieldFormat{shorttitle}{\textit{#1}\printtext{\dots}\isdot}
+\DeclareFieldFormat{shorttitle}{\textit{#1}\printtext{\dots\isdot}}
 \DeclareFieldFormat[article]{shorttitle}{\mkbibquote{#1\printtext{\dots}\isdot}\midsentence}
 \DeclareFieldFormat[inbook]{shorttitle}{\mkbibquote{#1\printtext{\dots}\isdot}\midsentence}
 \DeclareFieldFormat[incollection]{shorttitle}{\mkbibquote{#1\printtext{\dots}\isdot}\midsentence}
@@ -120,6 +144,7 @@
 
 \DeclareFieldFormat{postnote}{#1}
 \DeclareFieldFormat{multipostnote}{#1}
+
 
 %%%%% %%%%% %%%%% %%%%% %%%%% 
 %%%%% Cite bibmacros    %%%%%
@@ -177,7 +202,7 @@
     {%
      \iffieldsequal{title}{shorttitle}{%
        \printfield[title]{labeltitle}%
-       \printtext{\dots}\isdot% 
+       \printtext{\dots\isdot}% 
      }{%
        \printfield[shorttitle]{labeltitle}% 
       }%

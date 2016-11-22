@@ -1,4 +1,4 @@
-  %% biblatex-enc v.0.9.1b - beta (3/12/2015)
+  %% biblatex-enc v.0.9.1d - beta (22/11/2016)
   %% Copyright 2015 J.B. Camps (jbcamps <at> hotmail.com)
       
       %%%%% Contents %%%%
@@ -46,13 +46,9 @@
   % 4. Versions
   % ---------------
   % First version mars-april 2011
-  % Current version, 2013-2014 :
-  % TODO:
-  % - Comme on définit le format par défaut des noms de famille 
-  % d'auteurs comme pas en petites capitales, supprimer les formats
-  % upshape, et garder juste la spécification de SC pour la biblio ?
-  % - harmoniser les formats éditeurs
-    
+  % Current version, 2016 :
+  % Modified to work with BibLaTeX >= 3.3
+  %
   % 5. Licence
   % --------------- 
   %

@@ -25,12 +25,13 @@
 
 \ProvidesFile{enc.bbx}[]
 
-\@ifpackagelater{biblatex}{2010/02/14}
+\@ifpackagelater{biblatex}{2016/03/01}
   {}
   {\PackageError{biblatex}
     {Outdated 'biblatex' package}
-    {This style requires biblatex v0.9 or later.\MessageBreak
+    {This style requires biblatex v3.3 or later.\MessageBreak
      You are using: '\csuse{ver@biblatex.sty}'.\MessageBreak
+     For older version, use a previous release.
      This is a fatal error. I'm aborting now.}%
     \endinput}
 
@@ -41,6 +42,7 @@
 \newtoggle{bbx:url}
 \newtoggle{bbx:doi}
 \newtoggle{bbx:eprint}
+\newtoggle{bbx:annotatedBibliography} %new toggle to allow for annotated bibliographies
 
 \DeclareBibliographyOption{url}[true]{%
   \settoggle{bbx:url}{#1}}
@@ -48,6 +50,9 @@
   \settoggle{bbx:doi}{#1}}
 \DeclareBibliographyOption{eprint}[true]{%
   \settoggle{bbx:eprint}{#1}}
+\DeclareBibliographyOption{annotatedBibliography}[false]{%
+  \settoggle{bbx:annotatedBibliography}{#1}} %false by default
+  
 
 \ExecuteBibliographyOptions{
   url=true,
@@ -65,17 +70,17 @@
 %%%%% %%%%% %%%%% %%%%% %%%%% 
 %%%%% Reformatting      %%%%% 
 %%%%% %%%%% %%%%% %%%%% %%%%% 
-\renewcommand*{\mkbibnamefirst}[1]{#1}
-%\renewcommand*{\mkbibnamelast}[1]{#1}
+\renewcommand*{\mkbibnamegiven}[1]{#1}
+%\renewcommand*{\mkbibnamefamily}[1]{#1}
 \renewcommand*{\mkbibnameprefix}[1]{#1}
-\renewcommand*{\mkbibnameaffix}[1]{#1}
+\renewcommand*{\mkbibnamesuffix}[1]{#1}
 
 % Comme les petites capitales pour le nom de famille font partie de la 
 % définition du style de langue fr., il faut définir l'utilisation du 
 % romain un peu différemmment
-%\savecommand\mkbibnamelast%on sauvegarde la version avec small caps
+%\savecommand\mkbibnamefamily%on sauvegarde la version avec small caps
 \DefineBibliographyExtras{french}{%
-\renewcommand*{\mkbibnamelast}[1]{{\hyphenrules{nohyphenation}#1}}%
+\renewcommand*{\mkbibnamefamily}[1]{{\hyphenrules{nohyphenation}#1}}%
 }
 
 %Jamais de ponctuation entre les différentes parties d'un nom
@@ -112,6 +117,8 @@
 \DeclareFieldFormat[thesis]{title}{\textit{#1}}
 \DeclareFieldFormat[unpublished]{title}{\textit{#1}}
 
+%%%% Les annotations
+\DeclareFieldFormat{annotation}{{\footnotesize #1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%   Passage du français au français ENC  %%%%%%%
@@ -233,34 +240,39 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\DeclareNameFormat{last-first}{%
-  \iffirstinits
-    {\usebibmacro{name:last-first}{#1}{#4}{#5}{#7}}%
-    {\usebibmacro{name:last-first}{#1}{#3}{#5}{#7}}%
+
+\DeclareNameFormat{family-given}{%
+  \ifgiveninits
+    {\usebibmacro{name:family-given}{\namepartfamily}{\namepartgiveni}{\namepartprefix}{\namepartsuffix}}%
+    {\usebibmacro{name:family-given}{\namepartfamily}{\namepartgiven}{\namepartprefix}{\namepartsuffix}}%
   \usebibmacro{name:andothers}}
 
-\renewbibmacro*{name:last-first}[4]{%
+\renewbibmacro*{name:family-given}[4]{%
   \ifuseprefix
     {\usebibmacro{name:delim}{#3#1}%
      \usebibmacro{name:hook}{#3#1}%
-     \ifblank{#3}{}{%
+     \ifdefvoid{#3}{}{%%
        \ifcapital
          {\mkbibnameprefix{\MakeCapital{\textsc{#3}}}\isdot}
      {\mkbibnameprefix{\textsc{#3}}}%
        \ifpunctmark{'}{}{\addhighpenspace}}%
-     \mkbibnamelast{\textsc{#1}}\isdot
-     \ifblank{#4}{}{\addlowpenspace\mkbibnameaffix{#4}\isdot}%
-     \ifblank{#2}{}{\addlowpenspace\mkbibnamefirst{#2}\isdot}}
+     \mkbibnamefamily{\textsc{#1}}\isdot
+     \ifdefvoid{#4}{}{\addlowpenspace\mkbibnamesuffix{#4}\isdot}%
+     \ifdefvoid{#2}{}{\addlowpenspace\mkbibnamegiven{#2}\isdot}}
     {\usebibmacro{name:delim}{#1}%
      \usebibmacro{name:hook}{#1}%
-     \mkbibnamelast{\textsc{#1}}\isdot \addspace
-     \ifblank{#2#3#4}{}{
+     \mkbibnamefamily{\textsc{#1}}\isdot 
+     \ifboolexpr{%
+    test {\ifdefvoid{#2}} 
+    and
+    test{\ifdefvoid{#3}}
+    and
+    test{\ifdefvoid{#4}}
+   }{}{
      \mkbibparens{% ajout des parenthèses autour du prénom
-%
-%     \ifblank{#2#3}{}{\addcomma}%
-     \ifblank{#2}{}{\mkbibnamefirst{#2}}%
-     \ifblank{#3}{}{\addlowpenspace\mkbibnameprefix{#3}}
-     \ifblank{#4}{}{\addlowpenspace\mkbibnameaffix{#4}}\unspace}}
+     \ifdefvoid{#2}{}{\mkbibnamegiven{#2}}%
+     \ifdefvoid{#3}{}{\addlowpenspace\mkbibnameprefix{#3}}
+     \ifdefvoid{#4}{}{\addlowpenspace\mkbibnamesuffix{#4}}\unspace}}
 }}
 
 
@@ -273,7 +285,7 @@
     {\ifthenelse{\iffieldequals{namehash}{\bbx@lasthash}\AND
                  \NOT\iffirstonpage}
        {\bibnamedash}
-       {\printnames[last-first][1-10]{author}%entre \printnames et [1-10] on peut mettre un crochet avec une instruction de formatage.
+       {\printnames[family-given][1-10]{author}%entre \printnames et [1-10] on peut mettre un crochet avec une instruction de formatage.
         \savefield{namehash}{\bbx@lasthash}}}
     {\global\undef\bbx@lasthash}}
 
@@ -294,7 +306,11 @@
     {}
     {\usebibmacro{byeditor+othersstrg}%
      \setunit*{\addspace}%
-     \printnames[byeditor]{editor}%
+     \ifbibliography{%On teste si on est dans une bibliographie, car dans ce cas on veut le nom complet, sinon, on veut le même comportement que pour les noms d'auteurs (prénom abrégé à partir de la 2e occurrence
+     	\printnames[byeditor]{editor}%
+      }{%
+      	\printnames[citeauthor][1-10]{editor}%Je précise 1-10, pour qu'à la première occurrence on ait tous les éditeurs, mais c'est un peu un hack, car cela repose sur le fait que l'on ne mentionne, dans la version actuelle du style, les éditeurs que dans la première note complète. Une solution plus propre serait de procéder comme pour les auteurs, en différenciant editor-fullnote et editor-shortnote
+      }
      \savefield{namehash}{\cbx@lasthash}
      \clearname{editor}% 
      \setunit*{\addcomma\addspace}
@@ -334,16 +350,16 @@
       }}%
     {\global\undef\cbx@lasthash}}
 
-\newbibmacro*{name:first-last-upshape}[4]{%
+\newbibmacro*{name:given-family-upshape}[4]{%
   \usebibmacro{name:delim}{#2#3#1}%
-  \ifblank{#2}{}{#2\addlowpenspace}%
-  \ifblank{#3}{}{%
+  \ifdefvoid{#2}{}{#2\addlowpenspace}%
+  \ifdefvoid{#3}{}{%
     #3
     \ifpunctmark{'}
       {}
       {\ifuseprefix{\addhighpenspace}{\addlowpenspace}}}%
   #1
-  \ifblank{#4}{}{\addlowpenspace#4\addcomma}}
+  \ifdefvoid{#4}{}{\addlowpenspace#4\addcomma}}
 
 \newbibmacro*{author-fullnote/editor}{%
   \ifboolexpr{
@@ -393,6 +409,7 @@
   \newunit}
 
 \newbibmacro*{maintitle+booktitle}{%
+%\printfield[shorttitle]{labeltitle}
   \iffieldundef{maintitle}
     {}
     {\usebibmacro{maintitle}%
@@ -404,7 +421,7 @@
         \setunit{\addcolon\space}}}%
   \usebibmacro{booktitle}%
   \newunit}
-
+  
 \newbibmacro*{title+issuetitle}{%
   \usebibmacro{periodical}%
   \setunit*{\addspace}%
@@ -426,11 +443,9 @@
 
 \newbibmacro*{institution+location+year}{%
   \printlist{location}%
-  \iflistundef{institution}
-    {\setunit*{\addspace}}
-    {\setunit*{\addcolon\space}}%
+  \newunit%
   \printlist{institution}%
-  \setunit*{\addcomma\space}%
+  \newunit%
   \printfield{year}%
   \newunit}
 
@@ -441,21 +456,36 @@
   \newunit}
 
 \newbibmacro*{finentry}{\finentry}
+
   
 \newbibmacro*{doi+eprint+url}{%
-  \iftoggle{bbx:doi}
-    {\printfield{doi}}
+  \iftoggle{bbx:doi}%
+    {\printfield{doi}}%
     {}%
   \newunit%
-  \iftoggle{bbx:eprint}
-    {\usebibmacro{eprint}}
+  \iftoggle{bbx:eprint}%
+    {\usebibmacro{eprint}}%
     {}%
   \newunit%
   \iftoggle{bbx:url}%Modif. du 20/05/2016: n'afficher l'URL que si pas de doi.
-    {\iffieldundef{doi}
-    		{\usebibmacro{url+urldate}}
-    		{}}
-    {}}
+  	{\iftoggle{bbx:doi}%
+    		{\iffieldundef{doi}%
+    			{\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
+    			{}}%
+    		{\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
+  	}
+}
+
+\renewbibmacro*{annotation}{%
+	\iftoggle{bbx:annotatedBibliography}{%
+		\iffieldundef{annotation}{}{
+			\addspace%
+			\bibsentence%
+			\printfield{annotation}%
+			\finentry%
+		}
+	}{}%
+}
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% 
 %%%%% Bibliography Driver     %%%%% 
@@ -493,7 +523,9 @@
   \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+  }
 
 \DeclareBibliographyDriver{book}{%
   \usebibmacro{bibindex}%
@@ -525,12 +557,12 @@
 %  \newunit%
 %  \printfield{pagetotal}
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%  
+  }
 
 \DeclareBibliographyDriver{booklet}{%
   \usebibmacro{bibindex}%
@@ -557,7 +589,9 @@
   \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{collection}{%
   \usebibmacro{bibindex}%
@@ -575,7 +609,9 @@
   \printfield{volumes}%
   \newunit%
   \printfield{edition}%
+  \newunit%
   \printfield{note}%
+  \newunit%
   \usebibmacro{location+year}%
   \setunit*{\addspace}%
   \usebibmacro{series+number}%
@@ -585,12 +621,12 @@
   \newunit%
 %  \printfield{pagetotal}%
 %  \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{inbook}{%
   \usebibmacro{bibindex}%
@@ -599,37 +635,48 @@
   \usebibmacro{title}%
   \newunit%
   \usebibmacro{in:}%
-  \usebibmacro{bybookauthor}%
-  \usebibmacro{maintitle+booktitle}%
-  \newunit%
-  \usebibmacro{byeditor+others}%
+  \ifentryinbib{\thefield{crossref}}{%
+	\entrydata{\thefield{crossref}}{%
+		\iffieldundef{shorttitle}{%
+	  			\printfield[shorttitle]{title}%
+	  		}{%
+  				\printfield[shorttitle]{shorttitle}
+  			}
+  		}%	
+	}
+  {%
+	  \usebibmacro{bybookauthor}%
+	  \usebibmacro{maintitle+booktitle}%
+	  \newunit%
+	  \usebibmacro{byeditor+others}%
+	  \newunit%
+	  \printfield{volumes}%
+	  \newunit%
+	  \setunit*{\addspace}%
+	  \printfield{edition}%
+	  \setunit*{\newunitpunct}%
+	  \printfield{note}%
+	  \setunit*{\newunitpunct}%
+	  \usebibmacro{location+year}%
+	  \setunit*{\addspace}%
+	  \usebibmacro{series+number}%
+	  \setunit*{\newunitpunct}%
+ }
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-     \printfield{part}}%
-    {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
-  \printfield{volumes}%
-  \newunit%
-  \setunit*{\addspace}%
-  \printfield{edition}%
-  \setunit*{\newunitpunct}%
-  \printfield{note}%
-  \setunit*{\newunitpunct}%
-  \usebibmacro{location+year}%
-  \setunit*{\addspace}%
-  \usebibmacro{series+number}%
- \setunit*{\newunitpunct}%
- \newunit%
   %\setunit*{\addcomma\space}%
   \usebibmacro{chapter+pages}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{incollection}{%
   \usebibmacro{bibindex}%
@@ -638,42 +685,52 @@
   \usebibmacro{title}%
   \newunit%
   \usebibmacro{in:}%
-  \iffieldundef{editor}{}{%
-  \usebibmacro{editorincoll}%
-  \newunit%
-  }%
-  \usebibmacro{maintitle+booktitle}%
-%  \newunit%
- % \printlist{language}%
-  \newunit%
-  \usebibmacro{byeditor+others}%
+  \ifentryinbib{\thefield{crossref}}{%
+	\entrydata{\thefield{crossref}}{%
+		\iffieldundef{shorttitle}{%
+	  			\printfield[shorttitle]{title}%
+	  		}{%
+  				\printfield[shorttitle]{shorttitle}
+  			}
+  		}%	
+	}
+  {%
+  	\iffieldundef{editor}{}{%
+	  \usebibmacro{editorincoll}%
+	  \newunit%
+	  }%
+	\usebibmacro{maintitle+booktitle}%
+	%  \newunit%
+	 % \printlist{language}%
+	\newunit%
+	\usebibmacro{byeditor+others}%
+	\newunit%
+	\printfield{volumes}%
+	\newunit%
+	\setunit*{\addspace}%
+	\printfield{edition}%
+	\setunit*{\newunitpunct}%
+	\printfield{note}%
+	\setunit*{\newunitpunct}%
+	\usebibmacro{location+year}%
+	\setunit*{\addspace}%
+	\usebibmacro{series+number}%
+	\setunit*{\newunitpunct}%
+  }
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-     \printfield{part}}%
-    {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
-  \printfield{volumes}%
-  \newunit%
-  \setunit*{\addspace}%
-  \printfield{edition}%
-  \setunit*{\newunitpunct}%
-  \printfield{note}%
-  \setunit*{\newunitpunct}%
-  \usebibmacro{location+year}%
-  \setunit*{\addspace}%
-  \usebibmacro{series+number}%
- \setunit*{\newunitpunct}%
-%  \newunit%
-  \setunit*{\newunitpunct}%
   \usebibmacro{chapter+pages}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{inproceedings}{%
   \usebibmacro{bibindex}%
@@ -683,40 +740,53 @@
   \newunit%
   %\setunit{\addcomma\space}%
   \usebibmacro{in:}%
-  \iffieldundef{editor}{}{%
-  \usebibmacro{editorincoll}%
-  \newunit}%
-  \usebibmacro{maintitle+booktitle}%
-  \newunit%
-  \printfield{venue}%
-  %\newunit%
-  %\printlist{language}%
-  \newunit%
-  \usebibmacro{byeditor+others}%
+    \ifentryinbib{\thefield{crossref}}{%
+	\entrydata{\thefield{crossref}}{%
+		\iffieldundef{shorttitle}{%
+	  			\printfield[shorttitle]{title}%
+	  		}{%
+  				\printfield[shorttitle]{shorttitle}
+  			}
+  		}%	
+	}
+  {%
+	  \iffieldundef{editor}{}{%
+	  \usebibmacro{editorincoll}%
+	  \newunit}%
+	  \usebibmacro{maintitle+booktitle}%
+	  \newunit%
+	  \printfield{venue}%
+	  %\newunit%
+	  %\printlist{language}%
+	  \newunit%
+	  \usebibmacro{byeditor+others}%
+	  \newunit%
+	  \setunit*{\addspace}%
+	  \printfield{note}%
+	  \setunit*{\newunitpunct}%
+	  \printlist{organization}%
+	  \newunit%
+	  \usebibmacro{location+year}%
+	  \newunit%
+	  \setunit*{\addspace}%
+	  \usebibmacro{series+number}%
+	  \setunit*{\newunitpunct}%
+	  \newunit%
+	}
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-     \printfield{part}}%
-    {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
-  \setunit*{\addspace}%
-  \printfield{note}%
-  \setunit*{\newunitpunct}%
-  \printlist{organization}%
-  \newunit%
-  \usebibmacro{location+year}%
-  \newunit%
-  \setunit*{\addspace}%
-  \usebibmacro{series+number}%
-  \setunit*{\newunitpunct}%
   \usebibmacro{chapter+pages}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{manual}{%
   \usebibmacro{bibindex}%
@@ -747,12 +817,12 @@
   \setunit{\addspace}%
   \usebibmacro{series+number}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{misc}{%
   \usebibmacro{bibindex}%
@@ -781,7 +851,9 @@
   \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{online}{%
   \usebibmacro{bibindex}%
@@ -801,10 +873,12 @@
   \newunit%
   \usebibmacro{date}%
   \newunit%
-  \usebibmacro{url+urldate}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{patent}{%
   \usebibmacro{bibindex}%
@@ -827,12 +901,12 @@
   \newunit%
   \usebibmacro{date}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{periodical}{%
   \usebibmacro{bibindex}%
@@ -849,7 +923,9 @@
   \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{proceedings}{%
   \usebibmacro{bibindex}%
@@ -884,12 +960,12 @@
 %  \newunit%
 %  \printfield{pagetotal}
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{report}{%
   \usebibmacro{bibindex}%
@@ -916,7 +992,9 @@
   \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{thesis}{%
   \usebibmacro{bibindex}%
@@ -939,7 +1017,9 @@
   \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 \DeclareBibliographyDriver{unpublished}{%
   \usebibmacro{bibindex}%
@@ -955,12 +1035,12 @@
   \newunit%
   \usebibmacro{date}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
-  \usebibmacro{finentry}}
+  \usebibmacro{finentry}%
+  \usebibmacro{annotation}%
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -973,7 +1053,7 @@
 \DeclareBibliographyDriver{cite:article}{%%
   \usebibmacro{bibindex}%
   \usebibmacro{author-fullnote/editor}%
-  %\printnames[last-first][1-10]{author} 
+  %\printnames[family-given][1-10]{author} 
   \setunit{\labelnamepunct}%
   \usebibmacro{title}%
   \newunit%
@@ -1025,9 +1105,7 @@
 %  \newunit%
 %  \printfield{pagetotal}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1077,6 +1155,7 @@
   \printfield{edition}%
   \newunit%
   \printfield{note}%
+  \newunit%
   \usebibmacro{location+year}%
   \setunit{\addspace}%
   \usebibmacro{series+number}%
@@ -1086,9 +1165,7 @@
 %  \newunit%
 %  \printfield{pagetotal}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1100,34 +1177,38 @@
   \usebibmacro{title}%
   \newunit%
   \usebibmacro{in:}%
-  \usebibmacro{bybookauthor}%
-  \usebibmacro{maintitle+booktitle}%
-  %\newunit%
-  %\printlist{language}%
-  \newunit%
-  \usebibmacro{byeditor+others}%
+  \iffieldundef{crossref}{
+  	\usebibmacro{bybookauthor}%
+  	\usebibmacro{maintitle+booktitle}%
+  	%\newunit%
+  	%\printlist{language}%
+  	\newunit%
+ 	\usebibmacro{byeditor+others}%
+  	\newunit%
+  	\printfield{volumes}%
+  	\newunit%
+  	\setunit*{\addspace}%
+  	\printfield{edition}%
+  	\newunit%
+  	\printfield{note}%
+  	\newunit%
+  	\usebibmacro{location+year}%
+  	\setunit{\addspace}%
+  	\usebibmacro{series+number}%
+  }{%
+    \clearfield{prenote}%
+  	\clearfield{postnote}%
+  	\cite{\thefield{crossref}}
+  }
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-     \printfield{part}}%
-    {}%
-  \newunit%
-  \printfield{volumes}%
-  \newunit%
-  \setunit*{\addspace}%
-  \printfield{edition}%
-  \newunit%
-  \printfield{note}%
-  \newunit%
-  \usebibmacro{location+year}%
-  \setunit{\addspace}%
-  \usebibmacro{series+number}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
   \usebibmacro{chapter+pages}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1140,36 +1221,41 @@
   \newunit%
 %  \setunit{\addcomma\space}%
   \usebibmacro{in:}%
-  \iffieldundef{editor}{}{%
-  \usebibmacro{editorincoll}%
-  \newunit}%
-  \usebibmacro{maintitle+booktitle}%
-%  \newunit%
- % \printlist{language}%
-  \newunit%
-  \usebibmacro{byeditor+others}%
+  \iffieldundef{crossref}{%
+	  \iffieldundef{editor}{}{%
+	  \usebibmacro{editorincoll}%
+	  \newunit}%
+	  \usebibmacro{maintitle+booktitle}%
+	%  \newunit%
+	 % \printlist{language}%
+	  \newunit%
+	  \usebibmacro{byeditor+others}%
+	  \newunit%
+	  \printfield{volumes}%
+	  \newunit%
+	  \setunit*{\addspace}%
+	  \printfield{edition}%
+	  \setunit*{\newunitpunct}%
+	  \printfield{note}%
+	  \setunit*{\newunitpunct}%
+	  \usebibmacro{location+year}%
+	  \setunit*{\addspace}%
+	  \usebibmacro{series+number}%
+	 \setunit*{\newunitpunct}%
+ }{%
+ 	\clearfield{prenote}%
+  	\clearfield{postnote}%
+ 	\cite[][]{\thefield{crossref}}
+ }%
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-     \printfield{part}}%
-    {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
-  \printfield{volumes}%
-  \newunit%
-  \setunit*{\addspace}%
-  \printfield{edition}%
-  \setunit*{\newunitpunct}%
-  \printfield{note}%
-  \setunit*{\newunitpunct}%
-  \usebibmacro{location+year}%
-  \setunit*{\addspace}%
-  \usebibmacro{series+number}%
- \setunit*{\newunitpunct}%
   \usebibmacro{chapter+pages}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1181,39 +1267,43 @@
   \usebibmacro{title}%
   \setunit{\addcomma\space}%
   \usebibmacro{in:}%
-  \iffieldundef{editor}{}{%
-  \usebibmacro{editorincoll}%
-  \newunit}%
-  \usebibmacro{maintitle+booktitle}%
-  \newunit%
-  \printfield{venue}%
-  %\newunit%
-  %\printlist{language}%
-  \newunit%
-  \usebibmacro{byeditor+others}%
+  \iffieldundef{crossref}{%
+	  \iffieldundef{editor}{}{%
+	  \usebibmacro{editorincoll}%
+	  \newunit}%
+	  \usebibmacro{maintitle+booktitle}%
+	  \newunit%
+	  \printfield{venue}%
+	  %\newunit%
+	  %\printlist{language}%
+	  \newunit%
+	  \usebibmacro{byeditor+others}%
+	  \newunit%
+	  \printfield{volumes}%
+	  %
+	  \setunit*{\addspace}%
+	  \printfield{note}%
+	  \setunit*{\newunitpunct}%
+	  \printlist{organization}%
+	  \setunit*{\newunitpunct}%
+	  \usebibmacro{location+year}%
+	  \setunit*{\addspace}%
+	  \usebibmacro{series+number}%
+	  \setunit*{\newunitpunct}%
+  }{%
+  	\clearfield{prenote}%
+  	\clearfield{postnote}%
+  	\cite{\thefield{crossref}}%
+  }
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-     \printfield{part}}%
-    {}%
-  \newunit%
-  \printfield{volumes}%
-  %
-  \setunit*{\addspace}%
-  \printfield{note}%
-  \setunit*{\newunitpunct}%
-  \printlist{organization}%
-  \setunit*{\newunitpunct}%
-  \usebibmacro{location+year}%
-  \setunit*{\addspace}%
-  \usebibmacro{series+number}%
-  \setunit*{\newunitpunct}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
   \usebibmacro{chapter+pages}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1247,9 +1337,7 @@
   \setunit{\addspace}%
   \usebibmacro{series+number}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1301,7 +1389,7 @@
   \newunit%
   \usebibmacro{date}%
   \newunit%
-  \usebibmacro{url+urldate}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1327,9 +1415,7 @@
   \newunit%
   \usebibmacro{date}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1384,9 +1470,7 @@
 %  \newunit%
 %  \printfield{pagetotal}
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
@@ -1455,9 +1539,7 @@
   \newunit%
   \usebibmacro{date}%
   \newunit%
-  \iftoggle{bbx:url}%
-    {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    {}%
+  \usebibmacro{doi+eprint+url}%
   \newunit%
   \printfield{addendum}%
   \usebibmacro{finentry}}
