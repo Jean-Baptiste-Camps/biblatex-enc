@@ -12,7 +12,7 @@
   % 1. Description
   % ---------------
   % biblatex-enc is a citation and bibliography style for use with
-  % biblatex. It conforms to the bibliographic standards used
+  % BibLaTeX. It conforms to the bibliographic standards used
   % in the École nationale des chartes (Paris), and may be suited for a more
   % general use in historical and philological works. It is initially
   % derived from the historische-zeitschrift package maintained by 
