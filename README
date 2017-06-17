@@ -1,5 +1,5 @@
-  %% biblatex-enc v.0.9.1d - beta (22/11/2016)
-  %% Copyright 2015 J.B. Camps (jbcamps <at> hotmail.com)
+  %% biblatex-enc v.1.0 (17/06/2017)
+  %% Copyright 2011-2017 J.B. Camps (jbcamps <at> hotmail.com)
       
       %%%%% Contents %%%%
       % 1. Description  %
@@ -12,8 +12,8 @@
   % 1. Description
   % ---------------
   % biblatex-enc is a citation and bibliography style for use with
-  % biblatex. It tries to conform to the bibliographic standards used
-  % in the École nationale des chartes, and may be suited for a more
+  % biblatex. It conforms to the bibliographic standards used
+  % in the École nationale des chartes (Paris), and may be suited for a more
   % general use in historical works. It is initially derived from the 
   % historische-zeitschrift package maintained by Dominik Waßenhoven,
   % with the necessary modifications.
@@ -30,25 +30,92 @@
   
   % 3. Usage
   % --------------- 
+  % 3.1 General Usage
+  % ---------------
   % Load the style as the biblatex standard styles, with 
-  %   \usepackage[style=enc]{biblatex}
+  %    \usepackage[style=enc]{biblatex}
   %
-  % ..... [INSERT HERE DOCUMENTATION FOR MAIN COMMANDS] .....
+  % The style provides formatting for both the footnotes and the 
+  % bibliography with the standard commands,
+  %    \footcite[See][p.~]{my_reference}
+  % or 
+  %    \footnote{ <some text> [See][p.~]{my_reference}}
+  % and with 
+  %    \printbibliography
+  % N.B.: if you have defined shorthands, they will also be used, and 
+  % you can print them with
+  %    \printshorthands
+  %
+  % N.B.: the \cites{}{} and \footcites{}{} commands are also available,
+  % as well as \parencite{} and \parencites{}{}.
   
+  % 3.2 Repetition of a reference, an author, etc.
+  % ---------------  
+  % In accordance to the bibliographic standards here implemented,
+  % Ibid. is used for immediate repetition of a work, and Id., Ead., 
+  % Eid., Eaed. for immediate repetition of an author. If you
+  % want this last one to work properly, you will need to set the
+  % field 
+  %     gender={}
+  % (sf, sm, pf, pm) in the bibliography file (.bib). See the Biblatex
+  % documentation.
+  %
+  % The short title is used after the first appearance of a reference. 
+  % You will also need to set it in the .bib file,
+  %     shorttitle = {My Shorttitle},
+  %
+  % Finally, if you want for chapters or articles of the same volume to 
+  % be cited with the abreviated volume title, both in footnotes and in the 
+  % bibliography, you will need to use the 
+  %     crossref = {volume_key},
+  % field.
   
-  
+  % 3.3 Critical editions
+  % ---------------  
   % For critical editions to be handled correctly (i.e. for the critical 
   % editor to be quoted as « éd. Untel », and not « dir. Untel », the 
   % field editortype need to be set as criticaleditor in the .bib file,
   % e.g.
-  editortype = {criticaleditor}
+  % editortype = {criticaleditor}
+  
+  % 3.4 Annotated bibliography
+  % ---------------  
+  % If you want to produce an annotated bibliography, you can do it
+  % by setting the option
+  %    \usepackage[annotatedBibliography=true]{biblatex}
+  % This will print the content of the 
+  %    annotation = {This reference is annotated},
+  % of the bibliography (.bib) file in footnotesize, after the end 
+  % of the bibliographical reference (useful if you want to quote 
+  % reviews of a book, for instance).
+
+  % 3.5 Typical usage
+  % ---------------  
+  % You can call BibLaTeX and the style with,
+  %  \usepackage[backend=biber, %biber usage is recommended
+  %       sorting=nyt, % sorting by name, year, and title
+  %       indexing=cite, %If you want to index cited authors 
+  %       useeditor=false, %to keep sorting by title for edited works
+  %       annotatedBibliography=true, %to have annotations
+  %       style=enc, %
+  %       minbibnames=10, %minimum and maximum authors cited in the bibliography (use of 'et al.')
+  %       maxbibnames=10, %
+  %  ]{biblatex}
+  %    
+  
+  % 3.6 Note on localisation
+  % ---------------  
+  % This style is set for use with the French BibLaTeX locale
+  % but some of its definitions are replaced with new ones,
+  % in the .bbx file, in accordance to the bibliographic
+  % standards here implemented.
   
   % 4. Versions
   % ---------------
   % First version mars-april 2011
-  % Current version, 2016 :
+  % Current version, 2017 : 1.0
   % Modified to work with BibLaTeX >= 3.3
-  %
+  
   % 5. Licence
   % --------------- 
   %
@@ -64,4 +131,4 @@
   % 
   % The Current Maintainer of this work is J.B. Camps (jbcamps@hotmail.com).
   %
-  % This work consists of the files enc.cbx and enc.bbx.
+  % This work consists of the files README, enc.cbx and enc.bbx.
