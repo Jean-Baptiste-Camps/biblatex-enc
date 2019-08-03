@@ -65,7 +65,7 @@
   %     shorttitle = {My Shorttitle},
   %
   % Finally, if you want for chapters or articles of the same volume to 
-  % be cited with the abreviated volume title, both in footnotes and in the 
+  % be cited with the abbreviated volume title, both in footnotes and in the 
   % bibliography, you will need to use the 
   %     crossref = {volume_key},
   % field.
