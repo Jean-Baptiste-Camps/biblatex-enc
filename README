@@ -39,7 +39,7 @@
   % bibliography with the standard commands,
   %    \footcite[See][p.~]{my_reference}
   % or 
-  %    \footnote{ <some text> [See][p.~]{my_reference}}
+  %    \footnote{ <some text> \cite[See][p.~]{my_reference}}
   % and with 
   %    \printbibliography
   % N.B.: if you have defined shorthands, they will also be used, and 
