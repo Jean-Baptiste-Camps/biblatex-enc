@@ -316,9 +316,9 @@
     {\usebibmacro{byeditor+othersstrg}%
      \setunit*{\addspace}%
      \ifbibliography{%On teste si on est dans une bibliographie, car dans ce cas on veut le nom complet, sinon, on veut le même comportement que pour les noms d'auteurs (prénom abrégé à partir de la 2e occurrence
-      \printnames[byeditor]{editor}%
+     	\printnames[byeditor]{editor}%
       }{%
-        \printnames[citeauthor][1-10]{editor}%Je précise 1-10, pour qu'à la première occurrence on ait tous les éditeurs, mais c'est un peu un hack, car cela repose sur le fait que l'on ne mentionne, dans la version actuelle du style, les éditeurs que dans la première note complète. Une solution plus propre serait de procéder comme pour les auteurs, en différenciant editor-fullnote et editor-shortnote
+      	\printnames[citeauthor][1-10]{editor}%Je précise 1-10, pour qu'à la première occurrence on ait tous les éditeurs, mais c'est un peu un hack, car cela repose sur le fait que l'on ne mentionne, dans la version actuelle du style, les éditeurs que dans la première note complète. Une solution plus propre serait de procéder comme pour les auteurs, en différenciant editor-fullnote et editor-shortnote
       }
      \savefield{namehash}{\cbx@lasthash}
      \clearname{editor}%
@@ -385,9 +385,9 @@
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
 
 \renewbibmacro*{bybookauthor}{%
-  \ifnamesequal{author}{bookauthor}%
-  {}%
-  {\printnames{bookauthor}\setunit*{\newunitpunct}}}%On est obligés de mettre la ponctuation ici, pour éviter une virgule surnuméraire après "in"
+	\ifnamesequal{author}{bookauthor}%
+	{}%
+	{\printnames{bookauthor}\setunit*{\newunitpunct}}}%On est obligés de mettre la ponctuation ici, pour éviter une virgule surnuméraire après "in"
 
 \newbibmacro*{editorincoll}{%
   \ifthenelse{\ifuseeditor\AND\NOT\ifnameundef{editor}}
@@ -408,10 +408,10 @@
     {\iffieldundef{maintitle}
        {}
        {\usebibmacro{maintitle}%
-  \newunit%
-  \iffieldundef{volume}
-    {}
-    {\printfield{volume}%
+	\newunit%
+	\iffieldundef{volume}
+	  {}
+	  {\printfield{volume}%
            \printfield{part}%
            \setunit{\addcolon\space}}}}%
   \usebibmacro{title}%
@@ -477,23 +477,23 @@
     {}%
   \newunit%
   \iftoggle{bbx:url}%Modif. du 20/05/2016: n'afficher l'URL que si pas de doi.
-    {\iftoggle{bbx:doi}%
-        {\iffieldundef{doi}%
-          {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-          {}}%
-        {\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
-    }
+  	{\iftoggle{bbx:doi}%
+    		{\iffieldundef{doi}%
+    			{\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
+    			{}}%
+    		{\iffieldundef{url}{}{\usebibmacro{url+urldate}}}%
+  	}
 }
 
 \renewbibmacro*{annotation}{%
-  \iftoggle{bbx:annotatedBibliography}{%
-    \iffieldundef{annotation}{}{
-      \addspace%
-      \bibsentence%
-      \printfield{annotation}%
-      \finentry%
-    }
-  }{}%
+	\iftoggle{bbx:annotatedBibliography}{%
+		\iffieldundef{annotation}{}{
+			\addspace%
+			\bibsentence%
+			\printfield{annotation}%
+			\finentry%
+		}
+	}{}%
 }
 
 %%%%% %%%%% %%%%% %%%%% %%%%% %%%%%
@@ -536,7 +536,7 @@
   \usebibmacro{annotation}%
   }
 
-\DeclareBibliographyDriver{old-book}{%
+\DeclareBibliographyDriver{book}{%
   \usebibmacro{bibindex}%
   \usebibmacro{author/editor}%
   \setunit{\labelnamepunct}%
@@ -573,7 +573,7 @@
   \usebibmacro{annotation}%
   }
 
-\DeclareBibliographyDriver{book}{%
+\DeclareBibliographyDriver{old-book}{%
   \usebibmacro{bibindex}%
   \usebibmacro{author/editor}%
   \setunit{\labelnamepunct}%
@@ -594,7 +594,7 @@
   \setunit*{\newunitpunct}%
   \printfield{note}%
   \setunit*{\newunitpunct}%
-  \usebibmacro{location+publisher+year}%
+  \usebibmacro{location+year}%
   \setunit*{\addspace}%
   \usebibmacro{series+number}%
   \setunit{\newunitpunct}%
@@ -682,37 +682,37 @@
   \newunit%
   \usebibmacro{in:}%
   \ifentryinbib{\thefield{crossref}}{%
-  \entrydata{\thefield{crossref}}{%
-    \iffieldundef{shorttitle}{%
-          \printfield[shorttitle]{title}%
-        }{%
-          \printfield[shorttitle]{shorttitle}
-        }
-      }%
-  }
+	\entrydata{\thefield{crossref}}{%
+		\iffieldundef{shorttitle}{%
+	  			\printfield[shorttitle]{title}%
+	  		}{%
+  				\printfield[shorttitle]{shorttitle}
+  			}
+  		}%
+	}
   {%
-    \usebibmacro{bybookauthor}%
-    \usebibmacro{maintitle+booktitle}%
-    \newunit%
-    \usebibmacro{byeditor+others}%
-    \newunit%
-    \printfield{volumes}%
-    \newunit%
-    \setunit*{\addspace}%
-    \printfield{edition}%
-    \setunit*{\newunitpunct}%
-    \printfield{note}%
-    \setunit*{\newunitpunct}%
-    \usebibmacro{location+year}%
-    \setunit*{\addspace}%
-    \usebibmacro{series+number}%
-    \setunit*{\newunitpunct}%
+	  \usebibmacro{bybookauthor}%
+	  \usebibmacro{maintitle+booktitle}%
+	  \newunit%
+	  \usebibmacro{byeditor+others}%
+	  \newunit%
+	  \printfield{volumes}%
+	  \newunit%
+	  \setunit*{\addspace}%
+	  \printfield{edition}%
+	  \setunit*{\newunitpunct}%
+	  \printfield{note}%
+	  \setunit*{\newunitpunct}%
+	  \usebibmacro{location+year}%
+	  \setunit*{\addspace}%
+	  \usebibmacro{series+number}%
+	  \setunit*{\newunitpunct}%
  }
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-  \printfield{part}}%
-  {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
   %\setunit*{\addcomma\space}%
   \usebibmacro{chapter+pages}%
@@ -732,42 +732,42 @@
   \newunit%
   \usebibmacro{in:}%
   \ifentryinbib{\thefield{crossref}}{%
-  \entrydata{\thefield{crossref}}{%
-    \iffieldundef{shorttitle}{%
-          \printfield[shorttitle]{title}%
-        }{%
-          \printfield[shorttitle]{shorttitle}
-        }
-      }%
-  }
+	\entrydata{\thefield{crossref}}{%
+		\iffieldundef{shorttitle}{%
+	  			\printfield[shorttitle]{title}%
+	  		}{%
+  				\printfield[shorttitle]{shorttitle}
+  			}
+  		}%
+	}
   {%
-    \iffieldundef{editor}{}{%
-    \usebibmacro{editorincoll}%
-    \newunit%
-    }%
-  \usebibmacro{maintitle+booktitle}%
-  %  \newunit%
-   % \printlist{language}%
-  \newunit%
-  \usebibmacro{byeditor+others}%
-  \newunit%
-  \printfield{volumes}%
-  \newunit%
-  \setunit*{\addspace}%
-  \printfield{edition}%
-  \setunit*{\newunitpunct}%
-  \printfield{note}%
-  \setunit*{\newunitpunct}%
-  \usebibmacro{location+year}%
-  \setunit*{\addspace}%
-  \usebibmacro{series+number}%
-  \setunit*{\newunitpunct}%
+  	\iffieldundef{editor}{}{%
+	  \usebibmacro{editorincoll}%
+	  \newunit%
+	  }%
+	\usebibmacro{maintitle+booktitle}%
+	%  \newunit%
+	 % \printlist{language}%
+	\newunit%
+	\usebibmacro{byeditor+others}%
+	\newunit%
+	\printfield{volumes}%
+	\newunit%
+	\setunit*{\addspace}%
+	\printfield{edition}%
+	\setunit*{\newunitpunct}%
+	\printfield{note}%
+	\setunit*{\newunitpunct}%
+	\usebibmacro{location+year}%
+	\setunit*{\addspace}%
+	\usebibmacro{series+number}%
+	\setunit*{\newunitpunct}%
   }
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-  \printfield{part}}%
-  {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
   \usebibmacro{chapter+pages}%
   \newunit%
@@ -787,43 +787,43 @@
   %\setunit{\addcomma\space}%
   \usebibmacro{in:}%
     \ifentryinbib{\thefield{crossref}}{%
-  \entrydata{\thefield{crossref}}{%
-    \iffieldundef{shorttitle}{%
-          \printfield[shorttitle]{title}%
-        }{%
-          \printfield[shorttitle]{shorttitle}
-        }
-      }%
-  }
+	\entrydata{\thefield{crossref}}{%
+		\iffieldundef{shorttitle}{%
+	  			\printfield[shorttitle]{title}%
+	  		}{%
+  				\printfield[shorttitle]{shorttitle}
+  			}
+  		}%
+	}
   {%
-    \iffieldundef{editor}{}{%
-    \usebibmacro{editorincoll}%
-    \newunit}%
-    \usebibmacro{maintitle+booktitle}%
-    \newunit%
-    \printfield{venue}%
-    %\newunit%
-    %\printlist{language}%
-    \newunit%
-    \usebibmacro{byeditor+others}%
-    \newunit%
-    \setunit*{\addspace}%
-    \printfield{note}%
-    \setunit*{\newunitpunct}%
-    \printlist{organization}%
-    \newunit%
-    \usebibmacro{location+year}%
-    \newunit%
-    \setunit*{\addspace}%
-    \usebibmacro{series+number}%
-    \setunit*{\newunitpunct}%
-    \newunit%
-  }
+	  \iffieldundef{editor}{}{%
+	  \usebibmacro{editorincoll}%
+	  \newunit}%
+	  \usebibmacro{maintitle+booktitle}%
+	  \newunit%
+	  \printfield{venue}%
+	  %\newunit%
+	  %\printlist{language}%
+	  \newunit%
+	  \usebibmacro{byeditor+others}%
+	  \newunit%
+	  \setunit*{\addspace}%
+	  \printfield{note}%
+	  \setunit*{\newunitpunct}%
+	  \printlist{organization}%
+	  \newunit%
+	  \usebibmacro{location+year}%
+	  \newunit%
+	  \setunit*{\addspace}%
+	  \usebibmacro{series+number}%
+	  \setunit*{\newunitpunct}%
+	  \newunit%
+	}
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-  \printfield{part}}%
-  {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
   \usebibmacro{chapter+pages}%
   \newunit%
@@ -1106,50 +1106,16 @@
   \usebibmacro{byauthor}%
   \newunit%
   \usebibmacro{byeditor+others}%
-%   \newunit%
+%	  \newunit%
   \setunit{\addcomma\space}%
 %  \usebibmacro{in:}% pas de dans pour les articles, décommenter pour en avoir
   \usebibmacro{journal+issuetitle}%
-%   \newunit%
+%	  \newunit%
   \setunit*{\addcomma\space}%
   \printfield{note}%
-%   \newunit%
+%	  \newunit%
   \setunit*{\newunitpunct}%
   \printfield{pages}%
-  \newunit%
-  \usebibmacro{doi+eprint+url}%
-  \newunit%
-  \printfield{addendum}%
-  \usebibmacro{finentry}}
-
-\DeclareBibliographyDriver{cite:old-book}{%
-  \usebibmacro{bibindex}%
-  \usebibmacro{author-fullnote/editor}%
-  \setunit{\labelnamepunct}%
-  \usebibmacro{maintitle+title}%
-  \newunit%
-  \usebibmacro{byauthor}%
-  \newunit%
-  \usebibmacro{byeditor+others}%
-  \newunit%
-  \iffieldundef{maintitle}%
-    {\printfield{volume}%
-     \printfield{part}}%
-    {}%
-  \newunit%
-  \printfield{volumes}%
-  \newunit%
-  \printfield{edition}%
-  \newunit%
-  \printfield{note}%
-  \newunit%
-  \usebibmacro{location+publisher+year}%
-  \setunit{\addspace}%
-  \usebibmacro{series+number}%
-  \newunit%
-  \usebibmacro{chapter+pages}%
-%  \newunit%
-%  \printfield{pagetotal}%
   \newunit%
   \usebibmacro{doi+eprint+url}%
   \newunit%
@@ -1178,6 +1144,40 @@
   \printfield{note}%
   \newunit%
   \usebibmacro{location+year}%
+  \setunit{\addspace}%
+  \usebibmacro{series+number}%
+  \newunit%
+  \usebibmacro{chapter+pages}%
+%  \newunit%
+%  \printfield{pagetotal}%
+  \newunit%
+  \usebibmacro{doi+eprint+url}%
+  \newunit%
+  \printfield{addendum}%
+  \usebibmacro{finentry}}
+
+\DeclareBibliographyDriver{cite:old-book}{%
+  \usebibmacro{bibindex}%
+  \usebibmacro{author-fullnote/editor}%
+  \setunit{\labelnamepunct}%
+  \usebibmacro{maintitle+title}%
+  \newunit%
+  \usebibmacro{byauthor}%
+  \newunit%
+  \usebibmacro{byeditor+others}%
+  \newunit%
+  \iffieldundef{maintitle}%
+    {\printfield{volume}%
+     \printfield{part}}%
+    {}%
+  \newunit%
+  \printfield{volumes}%
+  \newunit%
+  \printfield{edition}%
+  \newunit%
+  \printfield{note}%
+  \newunit%
+  \usebibmacro{location+publisher+year}%
   \setunit{\addspace}%
   \usebibmacro{series+number}%
   \newunit%
@@ -1258,33 +1258,33 @@
   \newunit%
   \usebibmacro{in:}%
   \iffieldundef{crossref}{
-    \usebibmacro{bybookauthor}%
-    \usebibmacro{maintitle+booktitle}%
-    %\newunit%
-    %\printlist{language}%
-    \newunit%
-  \usebibmacro{byeditor+others}%
-    \newunit%
-    \printfield{volumes}%
-    \newunit%
-    \setunit*{\addspace}%
-    \printfield{edition}%
-    \newunit%
-    \printfield{note}%
-    \newunit%
-    \usebibmacro{location+year}%
-    \setunit{\addspace}%
-    \usebibmacro{series+number}%
+  	\usebibmacro{bybookauthor}%
+  	\usebibmacro{maintitle+booktitle}%
+  	%\newunit%
+  	%\printlist{language}%
+  	\newunit%
+ 	\usebibmacro{byeditor+others}%
+  	\newunit%
+  	\printfield{volumes}%
+  	\newunit%
+  	\setunit*{\addspace}%
+  	\printfield{edition}%
+  	\newunit%
+  	\printfield{note}%
+  	\newunit%
+  	\usebibmacro{location+year}%
+  	\setunit{\addspace}%
+  	\usebibmacro{series+number}%
   }{%
     \clearfield{prenote}%
-    \clearfield{postnote}%
-    \cite{\thefield{crossref}}
+  	\clearfield{postnote}%
+  	\cite{\thefield{crossref}}
   }
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-  \printfield{part}}%
-  {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
   \usebibmacro{chapter+pages}%
   \newunit%
@@ -1302,36 +1302,36 @@
 %  \setunit{\addcomma\space}%
   \usebibmacro{in:}%
   \iffieldundef{crossref}{%
-    \iffieldundef{editor}{}{%
-    \usebibmacro{editorincoll}%
-    \newunit}%
-    \usebibmacro{maintitle+booktitle}%
-  %  \newunit%
-   % \printlist{language}%
-    \newunit%
-    \usebibmacro{byeditor+others}%
-    \newunit%
-    \printfield{volumes}%
-    \newunit%
-    \setunit*{\addspace}%
-    \printfield{edition}%
-    \setunit*{\newunitpunct}%
-    \printfield{note}%
-    \setunit*{\newunitpunct}%
-    \usebibmacro{location+year}%
-    \setunit*{\addspace}%
-    \usebibmacro{series+number}%
-   \setunit*{\newunitpunct}%
+	  \iffieldundef{editor}{}{%
+	  \usebibmacro{editorincoll}%
+	  \newunit}%
+	  \usebibmacro{maintitle+booktitle}%
+	%  \newunit%
+	 % \printlist{language}%
+	  \newunit%
+	  \usebibmacro{byeditor+others}%
+	  \newunit%
+	  \printfield{volumes}%
+	  \newunit%
+	  \setunit*{\addspace}%
+	  \printfield{edition}%
+	  \setunit*{\newunitpunct}%
+	  \printfield{note}%
+	  \setunit*{\newunitpunct}%
+	  \usebibmacro{location+year}%
+	  \setunit*{\addspace}%
+	  \usebibmacro{series+number}%
+	 \setunit*{\newunitpunct}%
  }{%
-  \clearfield{prenote}%
-    \clearfield{postnote}%
-  \cite[][]{\thefield{crossref}}
+ 	\clearfield{prenote}%
+  	\clearfield{postnote}%
+ 	\cite[][]{\thefield{crossref}}
  }%
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-  \printfield{part}}%
-  {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
   \usebibmacro{chapter+pages}%
   \newunit%
@@ -1348,38 +1348,38 @@
   \setunit{\addcomma\space}%
   \usebibmacro{in:}%
   \iffieldundef{crossref}{%
-    \iffieldundef{editor}{}{%
-    \usebibmacro{editorincoll}%
-    \newunit}%
-    \usebibmacro{maintitle+booktitle}%
-    \newunit%
-    \printfield{venue}%
-    %\newunit%
-    %\printlist{language}%
-    \newunit%
-    \usebibmacro{byeditor+others}%
-    \newunit%
-    \printfield{volumes}%
-    %
-    \setunit*{\addspace}%
-    \printfield{note}%
-    \setunit*{\newunitpunct}%
-    \printlist{organization}%
-    \setunit*{\newunitpunct}%
-    \usebibmacro{location+year}%
-    \setunit*{\addspace}%
-    \usebibmacro{series+number}%
-    \setunit*{\newunitpunct}%
+	  \iffieldundef{editor}{}{%
+	  \usebibmacro{editorincoll}%
+	  \newunit}%
+	  \usebibmacro{maintitle+booktitle}%
+	  \newunit%
+	  \printfield{venue}%
+	  %\newunit%
+	  %\printlist{language}%
+	  \newunit%
+	  \usebibmacro{byeditor+others}%
+	  \newunit%
+	  \printfield{volumes}%
+	  %
+	  \setunit*{\addspace}%
+	  \printfield{note}%
+	  \setunit*{\newunitpunct}%
+	  \printlist{organization}%
+	  \setunit*{\newunitpunct}%
+	  \usebibmacro{location+year}%
+	  \setunit*{\addspace}%
+	  \usebibmacro{series+number}%
+	  \setunit*{\newunitpunct}%
   }{%
-    \clearfield{prenote}%
-    \clearfield{postnote}%
-    \cite{\thefield{crossref}}%
+  	\clearfield{prenote}%
+  	\clearfield{postnote}%
+  	\cite{\thefield{crossref}}%
   }
   \newunit%
   \iffieldundef{maintitle}%
-    {\printfield{volume}%
-  \printfield{part}}%
-  {}%
+  	{\printfield{volume}%
+	\printfield{part}}%
+	{}%
   \newunit%
   \usebibmacro{chapter+pages}%
   \newunit%
