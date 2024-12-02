@@ -111,18 +111,25 @@
   % standards here implemented.
 
 
-  % 3.7 old books
+  % 3.7 old prints
   % ---------------
   % The publisher is not included in @book. Since it is an important
   % information for old books, we have added a new type of
-  % bibliographic source: @old-print. The entry has to be encoded
+  % bibliographic source: @oldprint. The entry has to be encoded
   % exactly like a @book, but the publisher will be added to the
-  % bibliographic reference.
+  % bibliographic reference, e.g.,
+  % @oldprint{author_oldprint,
+  %   title = {Book's title},
+  %   author = {Author, Some},
+  %   location = {The City},
+  %   publisher = {Publisher},
+  %   date = {1675},
+  %  }
 
   % 4. Versions
   % ---------------
   % First version mars-april 2011
-  % Current version, 2017 : 1.0
+  % Current version, 2024 : 1.1
   % Modified to work with BibLaTeX >= 3.3
 
   % 5. Licence
